@@ -1,0 +1,435 @@
+﻿<!--
+Quick static single-file website for a 3D printing business
+Save this file as: index.html
+Open in Visual Studio (File -> Open -> File...) or create a new Empty Web Site and add this file.
+
+Features:
+- Responsive single-page layout
+- Hero / tagline
+- Services section
+- Gallery placeholders (use your images)
+- Pricing cards
+- Contact form (front-end validation only)
+- Minimal vanilla JS; easy to extend into an ASP.NET MVC/Razor project later
+
+How to extend in Visual Studio:
+- Create a new ASP.NET Web Application -> Empty
+- Add this file to the project or copy sections into _Layout.cshtml and views
+- Add a server-side contact handler later (e.g., using MVC controller or Web API)
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>StuffMadeByJosh — Custom 3D Printing</title>
+    <meta name="description" content="Fast, reliable custom 3D printing and prototyping. PLA available. Quick quotes and model check." />
+
+    <style>
+        /* Simple, self-contained styles. Tweak fonts/colors as desired. */
+        :root {
+            --bg: #0f1724; /* deep slate */
+            --card: #0b1220;
+            --muted: #99a3b3;
+            --accent: #ff6a00; /* orange */
+            --glass: rgba(255,255,255,0.03);
+            --radius: 12px;
+            --maxw: 1100px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(180deg,var(--bg),#071021);
+            color: #e6eef8;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .wrap {
+            max-width: var(--maxw);
+            margin: 36px auto;
+            padding: 24px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,var(--accent),#ffb37a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #071021
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            margin: 0
+        }
+
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-left: 14px
+        }
+
+            nav a:hover {
+                color: var(--accent)
+            }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 28px;
+            align-items: center;
+            margin-bottom: 18px
+        }
+
+        .hero-card {
+            background: var(--card);
+            padding: 22px;
+            border-radius: var(--radius);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.6)
+        }
+
+        .hero h2 {
+            margin: 0 0 12px 0;
+            font-size: 28px
+        }
+
+        .hero p {
+            margin: 0 0 18px;
+            color: var(--muted)
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 12px
+        }
+
+        .btn {
+            background: var(--accent);
+            color: #071021;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer
+        }
+
+            .btn.ghost {
+                background: transparent;
+                color: var(--accent);
+                border: 1px solid rgba(255,255,255,0.04)
+            }
+
+        .features {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px
+        }
+
+        .feature {
+            flex: 1;
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 10px
+        }
+
+            .feature h3 {
+                margin: 0 0 8px 0
+            }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 12px;
+            margin: 20px 0
+        }
+
+        .thumb {
+            background: linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.2));
+            height: 120px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 12px;
+            margin: 18px 0
+        }
+
+        .card {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 10px
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent)
+        }
+
+        .contact {
+            background: linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
+            padding: 18px;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 18px
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--muted)
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.04);
+            background: transparent;
+            color: inherit
+        }
+
+        textarea {
+            min-height: 120px
+        }
+
+        .small {
+            font-size: 13px;
+            color: var(--muted)
+        }
+
+        footer {
+            margin-top: 22px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center
+        }
+
+        /* Responsive tweaks */
+        @media (max-width:920px) {
+            .hero {
+                grid-template-columns: 1fr
+            }
+
+            .gallery {
+                grid-template-columns: repeat(2,1fr)
+            }
+
+            .cards {
+                grid-template-columns: repeat(2,1fr)
+            }
+
+            .contact {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media (max-width:520px) {
+            .gallery {
+                grid-template-columns: 1fr
+            }
+
+            .cards {
+                grid-template-columns: 1fr
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <div class="brand">
+                <div class="logo">SMBJ</div>
+                <div>
+                    <h1>StuffMadeByJosh</h1>
+                    <div class="small muted">Custom 3D printing & prototyping</div>
+                </div>
+            </div>
+            <nav>
+                <a href="#services">Services</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <div class="hero-card">
+                <h2>Clean prints. Fast turnaround.</h2>
+                <p class="muted">From concept to final part: FDM and post-processing services. Small-batch runs or single premium pieces.</p>
+                <div class="cta-row">
+                    <button class="btn" onclick="scrollToSection('contact')">Get a Quote</button>
+                    <button class="btn ghost" onclick="scrollToSection('gallery')">See Work</button>
+                </div>
+
+                <div class="features">
+                    <div class="feature">
+                        <h3>Materials</h3>
+                        <div class="small muted">PLA currently available. PETG and resin coming soon!</div>
+                    </div>
+                    <div class="feature">
+                        <h3>Finishes</h3>
+                        <div class="small muted">Sanding, priming, painting</div>
+                    </div>
+                    <div class="feature">
+                        <h3>Turnaround</h3>
+                        <div class="small muted">2–7 business days typically. Time may vary.</div>
+                    </div>
+                </div>
+            </div>
+
+            <aside>
+                <div class="hero-card">
+                    <h3>Quick spec</h3>
+                    <div class="small muted">Build volume: 220mm x 220mm x 220mm</div>
+                    <hr style="margin:12px 0;border:0;border-top:1px solid rgba(255,255,255,0.03)" />
+                    <div class="small muted"><strong>Pricing </strong><div>Upload STL, receive a quote in 24 hours.</div></div>
+                </div>
+            </aside>
+        </section>
+
+        <section id="gallery">
+            <h2 style="margin:6px 0">Gallery</h2>
+            <div class="gallery">
+                <div class="thumb"><img src="./IMG/IMG_2260.JPG" alt="3D print example"></div>
+                <div class="thumb"><img src="./IMG/IMG_2098.JPG" alt="3D print example"></div>
+                <div class="thumb"><img src="./IMG/IMG_3019.jpeg" alt="3D print example"></div>
+                <div class="thumb"><img src="./IMG/IMG_3281.jpeg" alt="3D print example"></div>
+                <div class="thumb"><img src="./IMG/IMG_3333.jpeg" alt="3D print example"></div>
+            </div>
+        </section>
+
+
+
+        <section id="pricing">
+            <h2 style="margin:6px 0">Pricing</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>PLA Prints</h3>
+                    <p class="small muted">Depends on grams of filament and time requiured to print</p>
+                    <div class="price">Cost = $0.045/gram of fillament + $1.75/hour of printing + 15% of the total production cost of the item to cover both wear and tear and failed prints.</div>
+                    <div class="small muted">Price may vary depending on other factors discussed.</div>
+                    <div>
+                    </div>
+        </section>
+
+        <section id="contact" style="margin-top:12px">
+            <h2 style="margin:6px 0">Contact & Quote</h2>
+            <div class="contact">
+                <form action="https://formspree.io/f/xanbawrr" method="POST">
+                    <label for="name">Name</label>
+                    <input id="name" name="name" placeholder="Your name" required />
+
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" placeholder="you@example.com" required />
+
+                    <label for="service">Service</label>
+                    <select id="service" name="service">
+                        <option>Raw PLA print, average quality (0.2mm layers)(single or multiple)</option>
+                        <option>Raw PLA print, medium quality (0.15mm layers)(single or multiple)</option>
+                        <option>Raw PLA print, high quality (0.1mm layer lines)(single or multiple)</option>
+                        <option>STL design creation</option>
+                    </select>
+
+                    <label for="message">Description of product / Specific requests / Upload link</label>
+                    <small>If sharing a file, please upload your file to a file-sharing service (Google Drive, Dropbox, etc.) and paste the shareable link above.</small>
+                    <textarea id="message" name="message" placeholder="Paste a link to your STL or describe your item"></textarea>
+
+
+                    <div style="margin-top:12px;display:flex;gap:8px">
+                        <button class="btn" type="submit">Send request</button>
+                        <button type="button" class="btn ghost" onclick="clearForm()">Clear</button>
+                    </div>
+
+                    <!-- Optional anti-spam honeypot -->
+                    <input type="text" name="_gotcha" style="display:none">
+
+                    <!-- Optional redirect after successful submit -->
+                    <input type="hidden" name="_redirect" value="https://stuffmadebyjosh.com/thank-you.html">
+
+                </form>
+
+                <aside style="background:var(--card);padding:12px;border-radius:10px">
+                    <h3>Contact</h3>
+                    <div class="small muted">Email: joshuazulpo2@gmail.com</div>
+                    <div style="height:12px"></div>
+                    <h3>Hours</h3>
+                    <div class="small muted">Mon–Fri 9am–6pm</div>
+                </aside>
+            </div>
+        </section>
+
+        <footer>
+            © <span id="year"></span> StuffMadeByJosh — Model & prototype 3D printing. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        // tiny helpers — copy/paste friendly
+        document.getElementById('year').textContent = new Date().getFullYear();
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            if (!name || !email) {
+                alert('Please include your name and email.');
+                return false;
+            }
+            // For now we just simulate success. Extend this area to POST to your server.
+            alert('Thanks, ' + name + '! Your request was recorded. Follow up at ' + email + '.');
+            clearForm();
+            return false;
+        }
+        function clearForm() {
+            document.getElementById('contactForm').reset();
+        }
+    </script>
+</body>
+</html>
